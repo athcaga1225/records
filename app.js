@@ -116,7 +116,8 @@ function setupRecordDrag(){
    cards.style.transition='none';
   }
   drag.delta=drag.axis==='y'?dy:dx;
-  const edge=(selected===0&&drag.delta>0)||(selected===projects.length-1&&drag.delta<0);
+  const direction=drag.axis==='y'?Math.sign(drag.delta):-Math.sign(drag.delta);
+  const edge=(selected===0&&direction<0)||(selected===projects.length-1&&direction>0);
   const offset=Math.max(-90,Math.min(90,drag.delta*(edge?.18:.55)));
   if(!reduced.matches)cards.style.translate=drag.axis==='y'?`0 ${offset}px`:`${offset}px 0`;
   e.preventDefault();
@@ -127,7 +128,7 @@ function setupRecordDrag(){
   if(stage.hasPointerCapture(e.pointerId))stage.releasePointerCapture(e.pointerId);
   cards.style.transition=reduced.matches?'none':'translate 220ms cubic-bezier(.2,.75,.2,1)';
   cards.style.translate='0 0';
-  if(!cancelled&&current.moved&&Math.abs(current.delta)>=28)selectWeb(selected+(current.delta<0?1:-1));
+  if(!cancelled&&current.moved&&Math.abs(current.delta)>=28)selectWeb(selected+(current.axis==='y'?Math.sign(current.delta):-Math.sign(current.delta)));
  }
  stage.addEventListener('pointerup',e=>finish(e));
  stage.addEventListener('pointercancel',e=>finish(e,true));
