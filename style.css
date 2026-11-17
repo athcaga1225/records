@@ -86,3 +86,6 @@ body *{font-family:'DM Sans','Noto Sans TC',sans-serif!important}
   from { opacity: 0; transform: translateY(28px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Desktop record gestures own both axes; phones retain vertical page scrolling. */
+@media (min-width:601px){#web .stage{touch-action:none}}
