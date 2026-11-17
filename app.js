@@ -96,7 +96,7 @@ for(const type of ['visual','motion']){$(type+'-prev').onclick=()=>changeSlide(t
 let swipeSuppressed=false;
 function swipe(el,callback,vertical=false){let start=null;el.addEventListener('pointerdown',e=>{if(e.target.matches('video'))return;start={x:e.clientX,y:e.clientY};swipeSuppressed=false;});el.addEventListener('pointerup',e=>{if(!start)return;let dx=e.clientX-start.x,dy=e.clientY-start.y;start=null;const delta=vertical&&innerWidth>600&&Math.abs(dy)>Math.abs(dx)?dy:dx;if(Math.abs(delta)>35&&(vertical||Math.abs(dx)>Math.abs(dy))){swipeSuppressed=true;callback(delta<0?1:-1);setTimeout(()=>swipeSuppressed=false,50);}});el.addEventListener('pointercancel',()=>start=null);}
 function setupRecordDrag(){
- const stage=$('stage'),cards=$('cards');
+ const stage=$('stage');
  let drag=null,blockedClick=false;
  stage.addEventListener('pointerdown',e=>{
   if(!e.isPrimary||e.button!==0)return;
@@ -113,21 +113,14 @@ function setupRecordDrag(){
    drag.moved=true;
    blockedClick=true;
    stage.setPointerCapture(e.pointerId);
-   cards.style.transition='none';
   }
   drag.delta=drag.axis==='y'?dy:dx;
-  const direction=drag.axis==='y'?Math.sign(drag.delta):-Math.sign(drag.delta);
-  const edge=(selected===0&&direction<0)||(selected===projects.length-1&&direction>0);
-  const offset=Math.max(-90,Math.min(90,drag.delta*(edge?.18:.55)));
-  if(!reduced.matches)cards.style.translate=drag.axis==='y'?`0 ${offset}px`:`${offset}px 0`;
   e.preventDefault();
  });
  function finish(e,cancelled=false){
   if(!drag||drag.id!==e.pointerId)return;
   const current=drag;drag=null;
   if(stage.hasPointerCapture(e.pointerId))stage.releasePointerCapture(e.pointerId);
-  cards.style.transition=reduced.matches?'none':'translate 220ms cubic-bezier(.2,.75,.2,1)';
-  cards.style.translate='0 0';
   if(!cancelled&&current.moved&&Math.abs(current.delta)>=28)selectWeb(selected+(current.axis==='y'?Math.sign(current.delta):-Math.sign(current.delta)));
  }
  stage.addEventListener('pointerup',e=>finish(e));
